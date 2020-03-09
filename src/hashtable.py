@@ -51,20 +51,15 @@ class HashTable:
 
         Fill this in.
         '''
-        # make sure theres open space
-        if self.count >= self.capacity:
-            self.resize()
-        # make sure key is in range
-        if key > self.count:
-            print("Error: Index out of range")
+        index = self._hash_mod(key)
+        hash_table = self.storage[index]
+        if self.storage:
+            hash_table = LinkedPair(key, value)
+            self.storage[index] = hash_table
             return
-        # shift everything to the right
-        # start with the last one, move it to the right
-        for i in range(self.count, key, -1):
-            self.storage[i] = self.storage[i - 1]
-        # insert our value
-        self.storage[index] = value
-        self.count += 1
+        else:
+            print('Collision')
+            return
 
     def remove(self, key):
         '''
@@ -74,7 +69,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        hash_table = self.storage[index]
+        if hash_table:
+            temporary = hash_table
+            hash_table = None
+            return temporary.value
+
+        print("Key isnt in this hash table")
+        return
 
     def retrieve(self, key):
         '''
