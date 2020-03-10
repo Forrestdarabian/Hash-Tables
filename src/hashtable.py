@@ -1,6 +1,9 @@
+import hashlib
 # '''
 # Linked List hash table key/value pair
 # '''
+
+# this is a full, complete linked list, this is all we need for chaining
 
 
 class LinkedPair:
@@ -9,6 +12,8 @@ class LinkedPair:
         self.value = value
         self.next = None
 
+# our hash table that has capacity buckets that accept string keys...emulating the functionality of allocating memory, by making use of a python list
+
 
 class HashTable:
     '''
@@ -16,9 +21,13 @@ class HashTable:
     that accepts string keys
     '''
 
+    # capacity is how much we can fit in our hash table
+
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+
+# leading underscore means do not use it outside of the class...its private
 
     def _hash(self, key):
         '''
@@ -26,7 +35,7 @@ class HashTable:
 
         You may replace the Python hash with DJB2 as a stretch goal.
         '''
-        return hash(key)
+        return hashlib.sha256(key.encode())
 
     def _hash_djb2(self, key):
         '''
@@ -35,6 +44,9 @@ class HashTable:
         OPTIONAL STRETCH: Research and implement DJB2
         '''
         pass
+
+    # hash mod calls hash and returns the capacity
+    # to get an index
 
     def _hash_mod(self, key):
         '''
@@ -47,19 +59,28 @@ class HashTable:
         '''
         Store the value with the given key.
 
-        Hash collisions should be handled with Linked List Chaining.
+        Hash collisions should be handled with 
+        Linked List Chaining.
 
         Fill this in.
         '''
+        # first we turn the key into an index in our array
         index = self._hash_mod(key)
-        hash_table = self.storage[index]
-        if self.storage:
-            hash_table = LinkedPair(key, value)
-            self.storage[index] = hash_table
-            return
+        # check for an error
+        if self.storage[index]:
+            print("ERROR: Key in use")
+        # key becomes our value
         else:
-            print('Collision')
-            return
+            self.storage[index] = value
+
+        #     hash_table = LinkedPair(key, value)
+        #     hash_table = self.storage[index]
+
+        #     self.storage[index] = hash_table
+        #     return
+        # else:
+        #     print('Collision')
+        #     return
 
     def remove(self, key):
         '''
@@ -69,15 +90,18 @@ class HashTable:
 
         Fill this in.
         '''
-        index = self._hash_mod(key)
-        hash_table = self.storage[index]
-        if hash_table:
-            temporary = hash_table
-            hash_table = None
-            return temporary.value
 
-        print("Key isnt in this hash table")
-        return
+        # first we turn the key into an index in our array
+        index = self._hash_mod(key)
+        # were not printing the error this time,
+        # we set self.storage to none first
+        if self.storage[index]:
+            self.storage[index] = None
+        # then print the error since its removed
+        else:
+            print("ERROR: Key not found")
+
+        # hash_table = self.storage[index]
 
     def retrieve(self, key):
         '''
@@ -87,11 +111,19 @@ class HashTable:
 
         Fill this in.
         '''
+
+        # once again get the index
         index = self._hash_mod(key)
-        hash_table = self.storage[index]
-        if hash_table:
-            return hash_table.value
-        return None
+        # then were just returning storage at the index,
+        # it returns none if key isnt found since we've
+        # initialized our storage array and set
+        # everything to None to begin with
+        return self.storage[index]
+
+        # hash_table = self.storage[index]
+        # if hash_table:
+        #     return hash_table.value
+        # return None
 
     def resize(self):
         '''
@@ -100,11 +132,22 @@ class HashTable:
 
         Fill this in.
         '''
-        self.capacity *= 2
-        new_storage = [None] * self.capacity
-        for i in range(self.count):
-            new_storage[i] = self.storage[i]
-        self.storage = new_storage
+        # pave our way for a new storage
+        old_storage = self.storage.copy()
+        # double the capacity
+        self.capacity = self.capacity * 2
+        # make new storage (none * capacity)
+        self.storage = [None] * self.capacity
+        # make our for each loop
+        for bucket_item in old_storage:
+            # re-insert everything in new key
+            self.insert(bucket_item)
+
+        # self.capacity *= 2
+        # new_storage = [None] * self.capacity
+        # for i in range(self.count):
+        #     new_storage[i] = self.storage[i]
+        # self.storage = new_storage
 
 
 if __name__ == "__main__":
