@@ -1,4 +1,3 @@
-import hashlib
 # '''
 # Linked List hash table key/value pair
 # '''
@@ -27,111 +26,123 @@ class HashTable:
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
 
-# leading underscore means do not use it outside of the class...its private
+    # leading underscore means do not use it outside of the class...its private
 
-    def _hash(self, key):
         '''
         Hash an arbitrary key and return an integer.
-
         You may replace the Python hash with DJB2 as a stretch goal.
         '''
-        return hashlib.sha256(key.encode())
 
-    def _hash_djb2(self, key):
+    def _hash(self, key):
+
+        return hash(key)
+
+    # def _hash_djb2(self, key):
         '''
         Hash an arbitrary key using DJB2 hash
-
         OPTIONAL STRETCH: Research and implement DJB2
         '''
-        pass
+        # pass
 
+    '''
+    Take an arbitrary key and return a valid integer index within the storage capacity of the hash table.
+    '''
     # hash mod calls hash and returns the capacity
     # to get an index
 
     def _hash_mod(self, key):
-        '''
-        Take an arbitrary key and return a valid integer index
-        within the storage capacity of the hash table.
-        '''
+
         return self._hash(key) % self.capacity
 
+        '''
+        Store the value with the given key. Hash collisions should be handled with Linked List Chaining.
+        '''
+
     def insert(self, key, value):
-        '''
-        Store the value with the given key.
 
-        Hash collisions should be handled with 
-        Linked List Chaining.
+        # first we turn the key into an index in our array
+        # index = self._hash_mod(key)
+        # # check for an error
+        # if self.storage[index]:
+        #     print("ERROR: Key in use")
+        # # key becomes our value
+        # else:
+        #     self.storage[index] = value
 
-        Fill this in.
-        '''
         # first we turn the key into an index in our array
         index = self._hash_mod(key)
-        # check for an error
+        # our new linked pairs are being chained
+        newLinkedPair = LinkedPair(key, value)
+        # if theres storage in the index...
         if self.storage[index]:
-            print("ERROR: Key in use")
-        # key becomes our value
-        else:
-            self.storage[index] = value
+            # store the value
+            newLinkedPair.next = self.storage[index]
+        self.storage[index] = newLinkedPair
 
-        #     hash_table = LinkedPair(key, value)
-        #     hash_table = self.storage[index]
-
-        #     self.storage[index] = hash_table
-        #     return
-        # else:
-        #     print('Collision')
-        #     return
+        '''
+        Remove the value stored with the given key. Print a warning if the key is not found.
+        '''
 
     def remove(self, key):
-        '''
-        Remove the value stored with the given key.
-
-        Print a warning if the key is not found.
-
-        Fill this in.
-        '''
-
-        # first we turn the key into an index in our array
+        # first get the index of the key were removing
         index = self._hash_mod(key)
-        # were not printing the error this time,
-        # we set self.storage to none first
-        if self.storage[index]:
-            self.storage[index] = None
-        # then print the error since its removed
-        else:
-            print("ERROR: Key not found")
+        # get the node at that index
+        current = self.storage[index]
+        prev = None
 
-        # hash_table = self.storage[index]
+        # loop through each node looking for a key match
+        while current is not None and current.key != key:
+            # keep track of prev node
+            prev = current
+            # continue through nodes
+            current = current.next
+
+        # if found, currents value is equal to node with the key match
+        if current is None:
+            print("Key not found!")
+        # if node with a match is at the head of the Linked List...
+        else:
+            if prev is None:
+                # assign new head to be next element
+                self.storage[index] = current.next
+            else:
+                prev.next = current.next
+
+            print("Key removed!")
+
+        '''
+        Retrieve the value stored with the given key. Returns None if the key is not found.
+        '''
 
     def retrieve(self, key):
-        '''
-        Retrieve the value stored with the given key.
-
-        Returns None if the key is not found.
-
-        Fill this in.
-        '''
+        # # once again get the index
+        # index = self._hash_mod(key)
+        # # then were just returning storage at the index, it returns none if key isnt found since we've initialized our storage array and set
+        # # everything to None to begin with
+        # return self.storage[index]
 
         # once again get the index
         index = self._hash_mod(key)
-        # then were just returning storage at the index,
-        # it returns none if key isnt found since we've
-        # initialized our storage array and set
-        # everything to None to begin with
-        return self.storage[index]
+        # if the value is found...
+        if self.storaage[index]:
+            # turn the linked list or value stored at that index into a variable
+            temporary = self.storaage[index]
+            # create a while loop for looping through the Linked List
+            while temporary:
+                # compare keys
+                if temporary.key:
+                    # if found, return value
+                    return temporary.value
+                # continue through Linked List
+                temporary = temporary.next
+        # if nothing is found
+        return None
 
-        # hash_table = self.storage[index]
-        # if hash_table:
-        #     return hash_table.value
-        # return None
+        '''
+        Doubles the capacity of the hash table and rehash all key/value pairs.
+        '''
 
     def resize(self):
-        '''
-        Doubles the capacity of the hash table and
-        rehash all key/value pairs.
-
-        Fill this in.
-        '''
         # pave our way for a new storage
         old_storage = self.storage.copy()
         # double the capacity
