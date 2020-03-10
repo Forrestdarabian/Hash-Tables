@@ -124,9 +124,9 @@ class HashTable:
         # once again get the index
         index = self._hash_mod(key)
         # if the value is found...
-        if self.storaage[index]:
+        if self.storage[index]:
             # turn the linked list or value stored at that index into a variable
-            temporary = self.storaage[index]
+            temporary = self.storage[index]
             # create a while loop for looping through the Linked List
             while temporary:
                 # compare keys
@@ -152,7 +152,7 @@ class HashTable:
         # make our for each loop
         for bucket_item in old_storage:
             # re-insert everything in new key
-            self.insert(bucket_item)
+            self.insert(bucket_item.key, bucket_item.value)
 
         # self.capacity *= 2
         # new_storage = [None] * self.capacity
