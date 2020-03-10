@@ -77,6 +77,7 @@ class HashTable:
         if self.storage[index]:
             # store the value
             newLinkedPair.next = self.storage[index]
+            # make a while loop
         self.storage[index] = newLinkedPair
 
         '''
@@ -144,21 +145,34 @@ class HashTable:
 
     def resize(self):
         # pave our way for a new storage
-        old_storage = self.storage.copy()
-        # double the capacity
-        self.capacity = self.capacity * 2
-        # make new storage (none * capacity)
-        self.storage = [None] * self.capacity
-        # make our for each loop
-        for bucket_item in old_storage:
-            # re-insert everything in new key
-            self.insert(bucket_item.key, bucket_item.value)
+        # old_storage = self.storage.copy()
+        # # double the capacity
+        # self.capacity = self.capacity * 2
+        # # make new storage (none * capacity)
+        # self.storage = [None] * self.capacity
+        # # make our for each loop
+        # for bucket_item in old_storage:
+        #     # re-insert everything in new key
+        #     self.insert(bucket_item.key, bucket_item.value)
 
-        # self.capacity *= 2
-        # new_storage = [None] * self.capacity
-        # for i in range(self.count):
-        #     new_storage[i] = self.storage[i]
-        # self.storage = new_storage
+        prev = self.storage
+        self.capacity = self.capacity * 2
+        self.storage = [None] * self.capacity
+        current = None
+
+        for item in prev:
+            current = item
+            while current:
+                self.insert(current.key, current.value)
+                current = current.next
+
+        self.count = 0
+
+        for pair in self.storage:
+            currentPair = pair
+            while currentPair:
+                self.count += 1
+                currentPair = currentPair.next
 
 
 if __name__ == "__main__":
