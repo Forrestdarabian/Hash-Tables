@@ -69,20 +69,36 @@ class HashTable:
         # else:
         #     self.storage[index] = value
 
-        # first we turn the key into an index in our array
-        index = self._hash_mod(key)
-        # our new linked pairs are being chained
-        newLinkedPair = LinkedPair(key, value)
-        # if theres storage in the index...
-        if self.storage[index]:
-            # store the value
-            newLinkedPair.next = self.storage[index]
-            # make a while loop
-        self.storage[index] = newLinkedPair
+        # # first we turn the key into an index in our array
+        # index = self._hash_mod(key)
+        # # our new linked pairs are being chained
+        # newLinkedPair = LinkedPair(key, value)
+        # # if theres storage in the index...
+        # if self.storage[index]:
+        #     # store the value
+        #     newLinkedPair.next = self.storage[index]
+        #     # make a while loop
+        # self.storage[index] = newLinkedPair
 
-        '''
-        Remove the value stored with the given key. Print a warning if the key is not found.
-        '''
+        # if theres room in our storage
+        if self.storage[self._hash_mod(key)]:
+            # store the value
+            current = self.storage[self._hash_mod(key)]
+            # while its inserted...
+            while current:
+                # loop through looking for a key match
+                if current.key == key:
+                    current.value = value
+                    break
+                # set current node equal to next node
+                if current.next:
+                    current = current.next
+                else:
+                    break
+            # chain our new linked pairs
+            current.next = LinkedPair(key, value)
+        else:
+            self.storage[self._hash_mod(key)] = LinkedPair(key, value)
 
     def remove(self, key):
         # first get the index of the key were removing
